@@ -1,0 +1,33 @@
+{
+    "PluginInfo": {
+        "PluginName": "粒子控制测试"
+    },
+    "ConfigEntries": {
+        "EnableParticleControl": {
+            "Category": "1. 控制",
+            "DispName": "启用粒子控制",
+            "Description": "启用粒子系统控制功能"
+        },
+        "ParticleSpeedMultiplier": {
+            "Category": "1. 控制",
+            "DispName": "粒子速度倍率",
+            "Description": "粒子模拟速度倍率 (0.1-2.0)"
+        },
+        "MaxParticlesLimit": {
+            "Category": "1. 控制",
+            "DispName": "最大粒子数限制",
+            "Description": "最大粒子数上限 (-1=无限制, 100-10000=限制)"
+        },
+        "PauseParticlesOnRaidEnd": {
+            "Category": "1. 控制",
+            "DispName": "战局结束时暂停粒子",
+            "Description": "战局结束时暂停非必要粒子效果"
+        },
+        "EnableDetailedLogging": {
+            "Category": "2. 调试",
+            "DispName": "启用详细日志",
+            "Description": "记录所有发现的粒子系统信息"
+        }
+    },
+    "Enum": {}
+}

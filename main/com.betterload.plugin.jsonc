@@ -1,0 +1,60 @@
+{
+    "Author": "BetterLoad Team",
+    "Version": "1.1.0",
+    "Website": "https://github.com/betterload/better-load",
+
+    //模组名称汉化
+    "PluginInfo": {
+        "PluginName": "Better Load - 性能优化"
+    },
+    //设置汉化
+    "ConfigEntries": {
+        "EnableMemoryCleanup": {
+            "Category": "1. Memory",
+            "DispName": "启用内存清理",
+            "Description": "启用内存稳定性优化功能"
+        },
+        "EnableRaidEndCleanup": {
+            "Category": "1. Memory",
+            "DispName": "启用战局结束清理",
+            "Description": "战局结束时执行内存清理（撤离或死亡后）"
+        },
+        "ForceFullGC": {
+            "Category": "1. Memory",
+            "DispName": "执行完整GC",
+            "Description": "强制执行完整垃圾回收（可能造成短暂卡顿）"
+        },
+        "CleanupDelaySeconds": {
+            "Category": "1. Memory",
+            "DispName": "清理延迟（秒）",
+            "Description": "战局结束后延迟多少秒开始清理"
+        },
+        "LodBias": {
+            "Category": "2. LOD",
+            "DispName": "LOD 偏移值",
+            "Description": "LOD 切换偏移（0.1-2.0，越低越早切换到低细节模型）"
+        },
+        "MaximumLODLevel": {
+            "Category": "2. LOD",
+            "DispName": "最大 LOD 等级",
+            "Description": "最大 LOD 等级（0=使用全部层级，越高画质越低）"
+        },
+        "ParticleSpeedMultiplier": {
+            "Category": "3. Particle",
+            "DispName": "粒子速度倍率",
+            "Description": "粒子播放速度倍率（0.1-2.0）"
+        },
+        "MaxParticlesLimit": {
+            "Category": "3. Particle",
+            "DispName": "最大粒子数量",
+            "Description": "单个粒子系统最大粒子数上限（-1=不限制）"
+        },
+        "PauseParticlesOnRaidEnd": {
+            "Category": "3. Particle",
+            "DispName": "战局结束暂停粒子",
+            "Description": "战局结束后暂停非必要粒子系统（枪口火焰、血液、弹孔等保持运行）"
+        }
+    },
+    //选项汉化
+    "Enum": {}
+}

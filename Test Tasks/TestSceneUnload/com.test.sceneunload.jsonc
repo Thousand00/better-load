@@ -1,0 +1,18 @@
+{
+    "PluginInfo": {
+        "PluginName": "场景卸载测试"
+    },
+    "ConfigEntries": {
+        "EnableSceneCleanup": {
+            "Category": "1. 清理",
+            "DispName": "启用场景清理",
+            "Description": "启用场景资源清理"
+        },
+        "EnableDetailedLogging": {
+            "Category": "2. 调试",
+            "DispName": "启用详细日志",
+            "Description": "启用详细内存日志输出"
+        }
+    },
+    "Enum": {}
+}

@@ -1,0 +1,38 @@
+# Build outputs - match bin/obj/ref/BetterLoad anywhere
+**/bin/
+**/obj/
+**/ref/
+**/BetterLoad/
+
+# NuGet
+**/*.nuget.cache
+**/*.nuget.props
+**/*.nuget.targets
+**/project.assets.json
+
+# IDE
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Logs
+**/*.log
+Logs/
+
+# Task planning files
+**/findings.md
+**/progress.md
+**/task_plan.md
+
+# BepInEx runtime
+BepInEx/
+
+# Embedded git directories
+**/.git/
