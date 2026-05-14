@@ -157,7 +157,7 @@ dotnet build "Better Load\BetterLoad.csproj" -c Release
 ### 架构演进
 
 ```
-当前 (v1.1.1)                 目标 (v2.0)
+当前 (v1.1.3)                 目标 (v2.0)
 ┌─────────────────────┐       ┌─────────────────────┐
 │ Plugin.cs            │       │ Plugin.cs (DI)      │
 │   ├─ EventBus        │       │   ├─ Event Bus     │
@@ -185,6 +185,9 @@ dotnet build "Better Load\BetterLoad.csproj" -c Release
 | 版本 | 状态 | 目标 |
 |------|------|------|
 | **v1.1.0** | ✅ | 激活 EventBus，Memory/LOD/Particle 全模块事件驱动通信，Patch `GameWorld.OnGameStarted` 和 `GameWorld.Dispose` |
+| **v1.1.1** | ✅ | 关键 Bug 修复：游戏版本 0.16.9 的正确 Patch 方法确认；EventBus 事件链路正常工作 |
+| **v1.1.2** | ✅ | 代码质量改进：RaidEndEvent 反射获取 LastLocation；Timer dispose 修复；GetModule nullable；反射缓存 |
+| **v1.1.3** | ✅ | 性能优化：移除 ToLower() 字符串分配；EventBus GC 优化；TryGetValue 替代 ContainsKey |
 | **v1.2.0** | ⬚ | Hook 引擎抽象，统一反射查找与 fallback 策略，内存监控加强 |
 | **v1.3.0** | ⬚ | 实时内存 HUD、智能 GC 调度、Hook 精确率提升 + 版本兼容 |
 | **v2.0.0** | ⬚ | 正式发布 + API 开放 |
