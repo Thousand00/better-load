@@ -106,7 +106,7 @@ call :print "          Deploy Complete!" %BOLD%
 call :print "========================================" %GREEN%
 echo.
 echo  \033[36m  DLL:    \033[37m%D:\EFT%\BepInEx\plugins\BetterLoad.dll
-echo  \033[36m  Config: \033[37m%D:\EFT%\BepInEx\plugins\com.betterload.plugin.jsonc
+echo  \033[36m  Config: \033[37m%D:\EFT%\BepInEx\plugins\zh-cn\com.betterload.plugin.jsonc
 echo.
 call :print "  Ready to use! Press any key to exit..." %YELLOW%
 echo.
