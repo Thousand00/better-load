@@ -7,6 +7,7 @@ namespace BetterLoad
         bool IsEnabled { get; }
         void OnLoad();
         void OnUnload();
+        void OnGUI();
     }
 
     public interface IUpdatableModule : IModule

@@ -48,6 +48,8 @@ namespace BetterLoad.Modules.Memory
             }
         }
 
+        public void OnGUI() { }
+
         private void BindConfig()
         {
             var section = "1. Memory";

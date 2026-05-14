@@ -125,6 +125,25 @@ namespace BetterLoad
             }
         }
 
+        public static void OnGUIAll()
+        {
+            lock (_lock)
+            {
+                foreach (var module in _modules)
+                {
+                    if (!module.IsEnabled) continue;
+                    try
+                    {
+                        module.OnGUI();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger?.LogError($"OnGUI error in module '{module.Name}': {ex.Message}");
+                    }
+                }
+            }
+        }
+
         public static IReadOnlyList<IModule> GetAllModules()
         {
             lock (_lock)

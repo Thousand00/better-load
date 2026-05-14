@@ -34,6 +34,11 @@ namespace BetterLoad
             ModuleManager.UpdateAll();
         }
 
+        private void OnGUI()
+        {
+            ModuleManager.OnGUIAll();
+        }
+
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             ModuleManager.Logger?.LogError($"[BetterLoad] Unhandled exception: {e.ExceptionObject}");

@@ -81,5 +81,7 @@ namespace BetterLoad.Modules.LOD
         {
             Restore();
         }
+
+        public void OnGUI() { }
     }
 }
