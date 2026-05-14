@@ -1,6 +1,6 @@
 # Better Load
 
-SPT-AKI 4.0.13 性能优化 Mod | v1.1.3
+SPT-AKI 4.0.13 性能优化 Mod | v1.1.4
 
 **功能**: 内存清理、LOD调整、粒子效果控制、EventBus 事件驱动
 

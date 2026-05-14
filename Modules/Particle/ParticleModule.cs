@@ -8,7 +8,7 @@ namespace BetterLoad.Modules.Particle
     public class ParticleModule : IModule
     {
         public string Name => "Particle";
-        public string Version => "1.0.0";
+        public string Version => "1.1.3";
         public bool IsEnabled { get; private set; }
 
         private ConfigEntry<float> _speedMultiplier;
@@ -24,16 +24,16 @@ namespace BetterLoad.Modules.Particle
         {
             var section = "3. Particle";
 
-            _speedMultiplier = ModuleManager.Config.Bind(section, "ParticleSpeedMultiplier", 0.8f,
-                new ConfigDescription("Particle speed multiplier (0.1-2.0)",
+            _speedMultiplier = ModuleManager.Config.Bind(section, "ParticleSpeedMultiplier", 1f,
+                new ConfigDescription("Particle speed multiplier (0.1-2.0, 1.0 = game default)",
                     new AcceptableValueRange<float>(0.1f, 2.0f)));
 
             _maxParticles = ModuleManager.Config.Bind(section, "MaxParticlesLimit", -1,
                 new ConfigDescription("Max particles limit (-1 = no limit)",
                     new AcceptableValueRange<int>(-1, 10000)));
 
-            _pauseOnRaidEnd = ModuleManager.Config.Bind(section, "PauseParticlesOnRaidEnd", true,
-                new ConfigDescription("Pause non-essential particles when raid ends"));
+            _pauseOnRaidEnd = ModuleManager.Config.Bind(section, "PauseParticlesOnRaidEnd", false,
+                new ConfigDescription("Pause non-essential particles when raid ends (game default: off)"));
 
             ModuleManager.EventBus.Subscribe<GameEvents.RaidStartEvent>(OnRaidStart);
             ModuleManager.EventBus.Subscribe<GameEvents.RaidEndEvent>(OnRaidEnd);
@@ -116,7 +116,7 @@ namespace BetterLoad.Modules.Particle
         {
             for (int i = 0; i < s_essentialPatterns.Length; i++)
             {
-                if (name.Contains(s_essentialPatterns[i], StringComparison.OrdinalIgnoreCase))
+                if (name.IndexOf(s_essentialPatterns[i], StringComparison.OrdinalIgnoreCase) >= 0)
                     return true;
             }
             return false;

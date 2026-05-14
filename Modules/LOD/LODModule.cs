@@ -7,7 +7,7 @@ namespace BetterLoad.Modules.LOD
     public class LODModule : IModule
     {
         public string Name => "LOD";
-        public string Version => "1.0.0";
+        public string Version => "1.1.3";
         public bool IsEnabled { get; private set; }
 
         private ConfigEntry<float> _lodBias;
@@ -18,8 +18,8 @@ namespace BetterLoad.Modules.LOD
 
         public void OnLoad()
         {
-            _lodBias = ModuleManager.Config.Bind("2. LOD", "LodBias", 0.5f,
-                new ConfigDescription("LOD Bias (0.1-2.0, lower = switch to low detail sooner)",
+            _lodBias = ModuleManager.Config.Bind("2. LOD", "LodBias", 2.5f,
+                new ConfigDescription("LOD Bias (0.1-2.0, lower = switch to low detail sooner, 2.5 = game default)",
                     new AcceptableValueRange<float>(0.1f, 2.0f)));
 
             _maxLodLevel = ModuleManager.Config.Bind("2. LOD", "MaximumLODLevel", 0,
