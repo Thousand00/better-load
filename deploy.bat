@@ -1,24 +1,64 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set "SRC=%~dp0BetterLoad"
-set "DEST=D:\EFT\BepInEx\plugins\BetterLoad"
+set "PROJECT_DIR=%~dp0"
+set "GAME_DIR=D:\EFT"
+set "BUILD_CONFIG=Release"
 
-if not exist "%DEST%\Plugins" mkdir "%DEST%\Plugins"
+echo ========================================
+echo   Better Load - Auto Deploy Script
+echo ========================================
+echo.
 
-copy /Y "%SRC%\BetterLoad.dll" "%DEST%\BetterLoad.dll"
+cd /d "%PROJECT_DIR%"
+
+echo [1/3] Restoring NuGet packages...
+dotnet restore
+if errorlevel 1 (
+    echo [ERROR] Restore failed!
+    pause
+    exit /b 1
+)
+
+echo.
+echo [2/3] Building project...
+dotnet build BetterLoad.csproj -c %BUILD_CONFIG%
+if errorlevel 1 (
+    echo [ERROR] Build failed!
+    pause
+    exit /b 1
+)
+
+echo.
+echo [3/3] Deploying to game directory...
+
+if not exist "%GAME_DIR%\BepInEx\plugins" (
+    echo [ERROR] Game BepInEx plugins directory not found: %GAME_DIR%\BepInEx\plugins
+    pause
+    exit /b 1
+)
+
+copy /Y "BetterLoad\BetterLoad.dll" "%GAME_DIR%\BepInEx\plugins\"
 if errorlevel 1 (
     echo [ERROR] Failed to copy BetterLoad.dll
-    goto :end
+    pause
+    exit /b 1
 )
 
-for %%F in ("%SRC%\Plugins\*.dll") do (
-    if /i "%%~nxF" neq "BetterLoad.dll" (
-        copy /Y "%%F" "%DEST%\Plugins\"
-    )
+copy /Y "com.betterload.plugin.jsonc" "%GAME_DIR%\BepInEx\plugins\"
+if errorlevel 1 (
+    echo [ERROR] Failed to copy com.betterload.plugin.jsonc
+    pause
+    exit /b 1
 )
 
-echo [OK] Deployed to %DEST%
-
-:end
-pause
+echo.
+echo ========================================
+echo   Deploy Complete!
+echo ========================================
+echo.
+echo DLL:    %GAME_DIR%\BepInEx\plugins\BetterLoad.dll
+echo Config: %GAME_DIR%\BepInEx\plugins\com.betterload.plugin.jsonc
+echo.
+echo Press any key to exit...
+pause >nul
