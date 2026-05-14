@@ -1,6 +1,6 @@
 # Better Load
 
-SPT-AKI 4.0.13 性能优化 Mod | v1.1.2
+SPT-AKI 4.0.13 性能优化 Mod | v1.1.3
 
 **功能**: 内存清理、LOD调整、粒子效果控制、EventBus 事件驱动
 
@@ -210,8 +210,8 @@ dotnet build "Better Load\BetterLoad.csproj" -c Release
 
 | 版本 | 日期 | 更新 |
 |------|------|------|
+| v1.1.3 | 2026-05-14 | **性能优化**：ParticleModule 移除 ToLower() 避免字符串分配，使用 OrdinalIgnoreCase 比较；EventBus 移除 ToList() 避免 GC 分配，使用 TryGetValue 优化查找；缓存配置值减少属性访问 |
 | v1.1.2 | 2026-05-14 | **代码质量改进**：RaidEndEvent 尝试通过反射获取 LastLocation；Timer dispose 修复防止资源泄漏；GetModule 返回类型改为 nullable；反射类型查找添加缓存提升性能 |
-| v1.1.1 | 2026-05-13 | **关键 Bug 修复**：游戏版本 0.16.9 的正确 Patch 方法为 `GameWorld.OnGameStarted` 和 `GameWorld.Dispose`（非之前文档的 `StartGame`/`ExitLocation`）；参考 HollywoodFX 源码确认；EventBus 事件链路现已正常工作；RaidEndEvent 数据结构完善 |
 | v1.1.0 | 2026-05-11 | 激活 EventBus 事件总线，Memory/LOD/Particle 三大模块全部接入事件驱动；MemoryPatcher 同时 Patch StartGame 和 ExitLocation/StopGame；LOD 模块战局开始应用配置、结束恢复原始设置；粒子模块战局开始调整参数、结束暂停非必要粒子；补齐 LOD/Particle 共 5 项配置汉化；提取 FindGameMethod 公共反射方法 |
 | v1.0.2 | 2026-05-10 | 集成 LOD/粒子模块到主项目；修复 Harmony Patch 目标定位、BindingFlags、Unity 主线程调用问题；新增防抖机制、单例模式、全局异常处理、IUpdatableModule 接口；统一命名空间和配置映射 |
 | v1.0.1 | 2026-05-09 | 稳定性优化、Hook 精确率提升 |

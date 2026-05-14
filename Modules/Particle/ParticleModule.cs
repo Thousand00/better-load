@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using BepInEx.Configuration;
+using StringComparison = System.StringComparison;
 
 namespace BetterLoad.Modules.Particle
 {
@@ -13,6 +14,11 @@ namespace BetterLoad.Modules.Particle
         private ConfigEntry<float> _speedMultiplier;
         private ConfigEntry<int> _maxParticles;
         private ConfigEntry<bool> _pauseOnRaidEnd;
+
+        private static readonly string[] s_essentialPatterns = new[]
+        {
+            "muzzle", "flash", "blood", "impact"
+        };
 
         public void OnLoad()
         {
@@ -51,17 +57,20 @@ namespace BetterLoad.Modules.Particle
             {
                 var systems = Resources.FindObjectsOfTypeAll<ParticleSystem>();
                 int count = 0;
+                var speedMultiplier = _speedMultiplier.Value;
+                var maxParticles = _maxParticles.Value;
+                var speedDiffers = Mathf.Abs(speedMultiplier - 1f) > 0.01f;
 
                 foreach (var ps in systems)
                 {
                     if (ps == null) continue;
                     var main = ps.main;
 
-                    if (Mathf.Abs(_speedMultiplier.Value - 1f) > 0.01f)
-                        main.simulationSpeed = _speedMultiplier.Value;
+                    if (speedDiffers)
+                        main.simulationSpeed = speedMultiplier;
 
-                    if (_maxParticles.Value > 0 && main.maxParticles > _maxParticles.Value)
-                        main.maxParticles = _maxParticles.Value;
+                    if (maxParticles > 0 && main.maxParticles > maxParticles)
+                        main.maxParticles = maxParticles;
 
                     count++;
                 }
@@ -86,9 +95,9 @@ namespace BetterLoad.Modules.Particle
                 foreach (var ps in systems)
                 {
                     if (ps == null) continue;
-                    var objName = ps.gameObject.name.ToLower();
-                    if (objName.Contains("muzzle") || objName.Contains("flash") ||
-                        objName.Contains("blood") || objName.Contains("impact"))
+                    var objName = ps.gameObject.name;
+
+                    if (IsEssentialParticle(objName))
                         continue;
 
                     ps.Pause(true);
@@ -101,6 +110,16 @@ namespace BetterLoad.Modules.Particle
             {
                 ModuleManager.Logger?.LogError($"[{Name}] Failed to pause particles: {ex.Message}");
             }
+        }
+
+        private static bool IsEssentialParticle(string name)
+        {
+            for (int i = 0; i < s_essentialPatterns.Length; i++)
+            {
+                if (name.Contains(s_essentialPatterns[i], StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
         }
 
         public void ResumeAll()

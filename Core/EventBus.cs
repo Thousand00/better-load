@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BetterLoad
 {
@@ -14,9 +13,12 @@ namespace BetterLoad
             lock (_lock)
             {
                 var eventType = typeof(T);
-                if (!_subscribers.ContainsKey(eventType))
-                    _subscribers[eventType] = new List<Delegate>();
-                _subscribers[eventType].Add(handler);
+                if (!_subscribers.TryGetValue(eventType, out var handlers))
+                {
+                    handlers = new List<Delegate>();
+                    _subscribers.Add(eventType, handlers);
+                }
+                handlers.Add(handler);
             }
         }
 
@@ -25,8 +27,10 @@ namespace BetterLoad
             lock (_lock)
             {
                 var eventType = typeof(T);
-                if (_subscribers.ContainsKey(eventType))
-                    _subscribers[eventType].Remove(handler);
+                if (_subscribers.TryGetValue(eventType, out var handlers))
+                {
+                    handlers.Remove(handler);
+                }
             }
         }
 
@@ -37,10 +41,8 @@ namespace BetterLoad
             List<Delegate> handlers;
             lock (_lock)
             {
-                var eventType = typeof(T);
-                if (!_subscribers.ContainsKey(eventType))
+                if (!_subscribers.TryGetValue(typeof(T), out handlers) || handlers.Count == 0)
                     return;
-                handlers = _subscribers[eventType].ToList();
             }
 
             foreach (var handler in handlers)
