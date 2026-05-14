@@ -7,7 +7,7 @@ namespace BetterLoad
     [BepInPlugin("com.betterload.plugin", "Better Load", Version)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string Version = "1.1.4";
+        public const string Version = "1.1.5";
 
         private void Awake()
         {
