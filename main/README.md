@@ -86,33 +86,7 @@ Better Load/
 │   ├── BetterLoad.csproj
 │   ├── Plugin.cs                    # BepInEx 入口
 │   └── README.md
-└── Test Tasks/                      # 独立测试插件
-    ├── TestSceneUnload/
-    ├── TestLODAdjust/
-    └── TestParticleControl/
 ```
-
-### 插件开发
-
-内置示例插件（Test Tasks）展示了如何开发 BetterLoad 插件：
-
-```csharp
-public class MyPlugin : IBetterLoadPlugin
-{
-    public string Name => "MyPlugin";
-    public string Version => "1.0.0";
-
-    public void OnLoad(BetterLoadFramework framework)
-    {
-        framework.EventBus.Subscribe<GameEvents.RaidStartEvent>(OnRaidStart);
-        framework.EventBus.Subscribe<GameEvents.RaidEndEvent>(OnRaidEnd);
-    }
-
-    public void OnUnload() { /* 取消订阅等清理工作 */ }
-}
-```
-
-构建后插件 DLL 自动输出到 `main/BetterLoad/Plugins/`，部署脚本自动复制到游戏目录。
 
 ---
 
@@ -125,12 +99,9 @@ public class MyPlugin : IBetterLoadPlugin
 
 ## 开发
 
-### 构建（主项目 + 全部插件）
+### 构建
 ```bash
 dotnet build "Better Load\main\BetterLoad.csproj" -c Release
-dotnet build "Better Load\Test Tasks\TestSceneUnload\SceneUnload.csproj" -c Release
-dotnet build "Better Load\Test Tasks\TestLODAdjust\LODAdjust.csproj" -c Release
-dotnet build "Better Load\Test Tasks\TestParticleControl\ParticleControl.csproj" -c Release
 ```
 
 或直接运行 `deploy.bat` 即可完成构建 + 部署到游戏目录。
