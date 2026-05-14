@@ -89,7 +89,7 @@ namespace BetterLoad
             }
         }
 
-        public static T? GetModule<T>() where T : class, IModule
+        public static T GetModule<T>() where T : class, IModule
         {
             lock (_lock)
             {
@@ -101,7 +101,7 @@ namespace BetterLoad
                     }
                 }
             }
-            return null;
+            return null!;
         }
 
         public static void UpdateAll()
