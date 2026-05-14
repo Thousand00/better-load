@@ -1,6 +1,6 @@
 # Better Load
 
-SPT-AKI 4.0.13 性能优化 Mod | v1.1.1
+SPT-AKI 4.0.13 性能优化 Mod | v1.1.2
 
 **功能**: 内存清理、LOD调整、粒子效果控制、EventBus 事件驱动
 
@@ -17,18 +17,18 @@ SPT-AKI 4.0.13 性能优化 Mod | v1.1.1
 
 ## 功能模块
 
-### 1. 内存清理 (MemoryCleanup)
+### 1. 内存清理 (Memory)
 - 战局结束时自动清理未使用资源
 - 执行 GC.Collect 释放内存（Timer 线程异步执行，避免卡顿）
 - Unity 资源卸载在主线程执行（通过 IUpdatableModule 机制）
 - 可配置延迟和完整GC模式
 
-### 2. LOD调整 (LODAdjust)
+### 2. LOD调整 (LOD)
 - 调整 `lodBias` 控制远处物体细节切换时机
 - 设置 `maximumLODLevel` 限制最高细节等级
 - 通过 EventBus 事件驱动：战局开始时应用配置，战局结束时恢复原始设置
 
-### 3. 粒子控制 (ParticleControl)
+### 3. 粒子控制 (Particle)
 - 调整粒子系统模拟速度
 - 限制最大粒子数量
 - 通过 EventBus 事件驱动：战局开始时调整粒子参数，战局结束时暂停非必要粒子（保留枪口火焰、血液等战斗关键效果）
@@ -54,7 +54,6 @@ SPT-AKI 4.0.13 性能优化 Mod | v1.1.1
 ### 粒子控制
 | 选项 | 默认 | 说明 |
 |------|------|------|
-| 启用粒子控制 | ✓ | 总开关 |
 | 速度倍率 | 0.8 | 0.1-2.0 |
 | 最大粒子数 | -1 | -1=无限制 |
 | 战局结束时暂停 | ✓ | |
@@ -64,28 +63,28 @@ SPT-AKI 4.0.13 性能优化 Mod | v1.1.1
 ## 项目结构
 
 ```
-Better Load/
-├── main/                           # 主项目
-│   ├── Core/                        # 核心组件
-│   │   ├── BetterLoadFramework.cs  # 插件框架（扫描/加载/卸载插件）
-│   │   ├── EventBus.cs              # 事件总线（模块/插件间解耦通信）
-│   │   ├── IBetterLoadPlugin.cs     # 插件接口
-│   │   └── ModuleManager.cs         # 模块管理器（含 IUpdatableModule 支持）
-│   ├── Modules/                     # 功能模块
-│   │   ├── Memory/                 # 内存清理模块
-│   │   │   ├── MemoryModule.cs
-│   │   │   └── MemoryPatcher.cs     # Harmony Patch（GameWorld.OnGameStarted/Dispose）
-│   │   ├── LOD/                     # LOD调整模块
-│   │   │   └── LODModule.cs
-│   │   └── Particle/               # 粒子控制模块
-│   │       └── ParticleModule.cs
-│   ├── Shared/                      # 共享接口
-│   │   └── IModule.cs              # IModule + IUpdatableModule 接口
-│   ├── Plugins/                     # 插件输出目录（构建时自动生成）
-│   ├── ref/                         # 游戏DLL引用（需从游戏目录复制）
-│   ├── BetterLoad.csproj
-│   ├── Plugin.cs                    # BepInEx 入口
-│   └── README.md
+Better Load/                          # 项目根目录
+├── Core/                              # 核心组件
+│   ├── BetterLoadFramework.cs        # 插件框架（扫描/加载/卸载插件）
+│   ├── EventBus.cs                   # 事件总线（模块/插件间解耦通信）
+│   ├── IBetterLoadPlugin.cs          # 插件接口
+│   └── ModuleManager.cs              # 模块管理器（含 IUpdatableModule 支持）
+├── Modules/                           # 功能模块
+│   ├── Memory/                       # 内存清理模块
+│   │   ├── MemoryModule.cs
+│   │   └── MemoryPatcher.cs          # Harmony Patch（GameWorld.OnGameStarted/Dispose）
+│   ├── LOD/                          # LOD调整模块
+│   │   └── LODModule.cs
+│   └── Particle/                     # 粒子控制模块
+│       └── ParticleModule.cs
+├── Shared/                            # 共享接口
+│   └── IModule.cs                    # IModule + IUpdatableModule 接口
+├── ref/                               # 游戏DLL引用（需从游戏目录复制）
+├── BetterLoad/                        # 构建输出目录（构建时自动生成）
+├── BetterLoad.csproj                  # 项目文件
+├── Plugin.cs                          # BepInEx 入口
+├── deploy.bat                         # 构建+部署脚本
+└── README.md
 ```
 
 ---
@@ -101,7 +100,7 @@ Better Load/
 
 ### 构建
 ```bash
-dotnet build "Better Load\main\BetterLoad.csproj" -c Release
+dotnet build "Better Load\BetterLoad.csproj" -c Release
 ```
 
 或直接运行 `deploy.bat` 即可完成构建 + 部署到游戏目录。
@@ -158,7 +157,7 @@ dotnet build "Better Load\main\BetterLoad.csproj" -c Release
 ### 架构演进
 
 ```
-当前 (v1.1.0)                 目标 (v2.0)
+当前 (v1.1.1)                 目标 (v2.0)
 ┌─────────────────────┐       ┌─────────────────────┐
 │ Plugin.cs            │       │ Plugin.cs (DI)      │
 │   ├─ EventBus        │       │   ├─ Event Bus     │
@@ -175,7 +174,7 @@ dotnet build "Better Load\main\BetterLoad.csproj" -c Release
 | 模块 | 优先级 | 状态 | 功能 |
 |------|--------|------|------|
 | **Core** | P0 | ✅ | 生命周期管理、事件总线 |
-| **MemoryManager** | P0 | ✅ | GC调度、内存监控、战局结束清理 |
+| **Memory** | P0 | ✅ | GC调度、内存监控、战局结束清理 |
 | **HookEngine** | P0 | ⬚ | Harmony Patch 管理、方法定位缓存 |
 | **ConfigManager** | P1 | ⬚ | 配置持久化、校验、迁移 |
 | **Profiler** | P1 | ⬚ | 性能数据采集、统计、导出 |
@@ -211,7 +210,8 @@ dotnet build "Better Load\main\BetterLoad.csproj" -c Release
 
 | 版本 | 日期 | 更新 |
 |------|------|------|
-| v1.1.1 | 2026-05-13 | **关键 Bug 修复**：游戏版本 0.16.9 的正确 Patch 方法为 `GameWorld.OnGameStarted` 和 `GameWorld.Dispose`（非之前文档的 `StartGame`/`ExitLocation`）；参考 HollywoodFX 源码确认；Test Tasks 全部实测通过；主 BetterLoad MemoryPatcher 同步修复，EventBus 事件链路现已正常工作 |
+| v1.1.2 | 2026-05-14 | **代码质量改进**：RaidEndEvent 尝试通过反射获取 LastLocation；Timer dispose 修复防止资源泄漏；GetModule 返回类型改为 nullable；反射类型查找添加缓存提升性能 |
+| v1.1.1 | 2026-05-13 | **关键 Bug 修复**：游戏版本 0.16.9 的正确 Patch 方法为 `GameWorld.OnGameStarted` 和 `GameWorld.Dispose`（非之前文档的 `StartGame`/`ExitLocation`）；参考 HollywoodFX 源码确认；EventBus 事件链路现已正常工作；RaidEndEvent 数据结构完善 |
 | v1.1.0 | 2026-05-11 | 激活 EventBus 事件总线，Memory/LOD/Particle 三大模块全部接入事件驱动；MemoryPatcher 同时 Patch StartGame 和 ExitLocation/StopGame；LOD 模块战局开始应用配置、结束恢复原始设置；粒子模块战局开始调整参数、结束暂停非必要粒子；补齐 LOD/Particle 共 5 项配置汉化；提取 FindGameMethod 公共反射方法 |
 | v1.0.2 | 2026-05-10 | 集成 LOD/粒子模块到主项目；修复 Harmony Patch 目标定位、BindingFlags、Unity 主线程调用问题；新增防抖机制、单例模式、全局异常处理、IUpdatableModule 接口；统一命名空间和配置映射 |
 | v1.0.1 | 2026-05-09 | 稳定性优化、Hook 精确率提升 |

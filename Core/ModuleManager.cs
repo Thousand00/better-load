@@ -113,8 +113,8 @@ namespace BetterLoad
         /// 获取模块
         /// </summary>
         /// <typeparam name="T">模块类型</typeparam>
-        /// <returns>模块实例</returns>
-        public static T GetModule<T>() where T : IModule
+        /// <returns>模块实例，未找到返回 null</returns>
+        public static T? GetModule<T>() where T : class, IModule
         {
             lock (_lock)
             {
@@ -126,7 +126,7 @@ namespace BetterLoad
                     }
                 }
             }
-            return default;
+            return null;
         }
 
         /// <summary>

@@ -9,6 +9,7 @@ namespace BetterLoad.Modules.Memory
     {
         private readonly Harmony _harmony;
         private readonly MemoryModule _module;
+        private static Type _cachedGameWorldType;
 
         public MemoryPatcher(Harmony harmony, MemoryModule module)
         {
@@ -20,7 +21,7 @@ namespace BetterLoad.Modules.Memory
         {
             try
             {
-                var gameWorldType = FindType("EFT.GameWorld");
+                var gameWorldType = FindTypeCached("EFT.GameWorld");
                 if (gameWorldType == null)
                 {
                     ModuleManager.Logger?.LogWarning("[Memory] Could not find GameWorld type");
@@ -52,6 +53,13 @@ namespace BetterLoad.Modules.Memory
                 {
                     ModuleManager.Logger?.LogWarning("[Memory] Could not find Dispose");
                 }
+
+                var gameWorldField = gameWorldType.GetField("Instance",
+                    BindingFlags.Public | BindingFlags.Static);
+                if (gameWorldField != null)
+                {
+                    ModuleManager.Logger?.LogInfo($"[Memory] Found GameWorld.Instance field");
+                }
             }
             catch (Exception ex)
             {
@@ -59,11 +67,16 @@ namespace BetterLoad.Modules.Memory
             }
         }
 
-        private static Type FindType(string fullName)
+        private static Type FindTypeCached(string fullName)
         {
-            return AppDomain.CurrentDomain.GetAssemblies()
+            if (_cachedGameWorldType != null && _cachedGameWorldType.FullName == fullName)
+                return _cachedGameWorldType;
+
+            _cachedGameWorldType = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => { try { return a.GetTypes(); } catch { return Type.EmptyTypes; } })
                 .FirstOrDefault(t => t.FullName == fullName);
+
+            return _cachedGameWorldType;
         }
 
         internal static void OnRaidStarted()
@@ -75,10 +88,38 @@ namespace BetterLoad.Modules.Memory
             });
         }
 
-        internal static void OnRaidEnding()
+        internal static void OnRaidEnding(object __instance)
         {
             ModuleManager.Logger?.LogInfo("[Memory] Raid ending detected");
-            ModuleManager.EventBus.Publish(new GameEvents.RaidEndEvent());
+
+            bool isDeath = false;
+            string exitLocation = string.Empty;
+
+            try
+            {
+                if (__instance != null)
+                {
+                    var locationSetter = __instance.GetType().GetProperty("LastLocation");
+                    if (locationSetter != null)
+                    {
+                        var value = locationSetter.GetValue(__instance);
+                        if (value != null)
+                        {
+                            exitLocation = value.ToString();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            ModuleManager.EventBus.Publish(new GameEvents.RaidEndEvent
+            {
+                IsDeath = isDeath,
+                ExitLocation = exitLocation
+            });
+
             var module = ModuleManager.GetModule<MemoryModule>();
             module?.ScheduleCleanup();
         }

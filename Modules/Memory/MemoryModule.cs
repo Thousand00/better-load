@@ -34,6 +34,8 @@ namespace BetterLoad.Modules.Memory
         {
             RemovePatch();
             IsEnabled = false;
+            _cleanupTimer?.Dispose();
+            _cleanupTimer = null;
             ModuleManager.Logger?.LogInfo($"[{Name}] Module unloaded");
         }
 
@@ -75,7 +77,6 @@ namespace BetterLoad.Modules.Memory
         private void RemovePatch()
         {
             _harmony?.UnpatchSelf();
-            _cleanupTimer?.Dispose();
         }
 
         public void ScheduleCleanup()

@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set "SRC=%~dp0main\BetterLoad"
+set "SRC=%~dp0BetterLoad"
 set "DEST=D:\EFT\BepInEx\plugins\BetterLoad"
 
 if not exist "%DEST%\Plugins" mkdir "%DEST%\Plugins"
