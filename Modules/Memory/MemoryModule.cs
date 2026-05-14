@@ -21,6 +21,15 @@ namespace BetterLoad.Modules.Memory
 
         private Timer _cleanupTimer;
         private volatile bool _pendingUnityCleanup;
+        private long _lastMemoryMB;
+        private long _freedMemoryMB;
+        private bool _showFreedThisFrame;
+
+        private ConfigEntry<bool> _showHUD;
+        private const int HUD_WIDTH = 160;
+        private const int HUD_HEIGHT = 50;
+        private const int HUD_POS_X = 10;
+        private const int HUD_POS_Y = 10;
 
         public void OnLoad()
         {
@@ -46,9 +55,41 @@ namespace BetterLoad.Modules.Memory
                 _pendingUnityCleanup = false;
                 ExecuteUnityCleanup();
             }
+
+            if (_showHUD?.Value == true)
+            {
+                _lastMemoryMB = GC.GetTotalMemory(false) / 1024 / 1024;
+            }
         }
 
-        public void OnGUI() { }
+        public void OnGUI()
+        {
+            if (_showHUD?.Value != true) return;
+
+            var style = new UnityEngine.GUIStyle
+            {
+                alignment = UnityEngine.TextAnchor.MiddleLeft,
+                fontSize = 14,
+                normal = { textColor = UnityEngine.Color.white }
+            };
+
+            var bgTexture = new UnityEngine.Texture2D(1, 1);
+            bgTexture.SetPixel(0, 0, new UnityEngine.Color(0, 0, 0, 0.7f));
+            bgTexture.Apply();
+            var bgStyle = new UnityEngine.GUIStyle { normal = { background = bgTexture } };
+
+            float boxHeight = _showFreedThisFrame && _freedMemoryMB > 0 ? HUD_HEIGHT + 25 : HUD_HEIGHT;
+
+            UnityEngine.GUI.Box(new UnityEngine.Rect(HUD_POS_X - 5, HUD_POS_Y - 5, HUD_WIDTH + 10, boxHeight + 5), UnityEngine.GUIContent.none, bgStyle);
+            UnityEngine.GUI.Label(new UnityEngine.Rect(HUD_POS_X, HUD_POS_Y, HUD_WIDTH, 20), $"Memory: {_lastMemoryMB} MB", style);
+
+            if (_showFreedThisFrame && _freedMemoryMB > 0)
+            {
+                style.normal.textColor = UnityEngine.Color.green;
+                UnityEngine.GUI.Label(new UnityEngine.Rect(HUD_POS_X, HUD_POS_Y + 22, HUD_WIDTH, 20), $"Freed: {_freedMemoryMB} MB", style);
+                _showFreedThisFrame = false;
+            }
+        }
 
         private void BindConfig()
         {
@@ -65,6 +106,9 @@ namespace BetterLoad.Modules.Memory
             _cleanupDelaySeconds = ModuleManager.Config.Bind(section, "CleanupDelaySeconds", 5,
                 new ConfigDescription("Delay before cleanup (seconds)",
                     new AcceptableValueRange<int>(0, 120)));
+
+            _showHUD = ModuleManager.Config.Bind(section, "ShowMemoryHUD", false,
+                new ConfigDescription("Show memory HUD on screen"));
         }
 
         private void ApplyPatch()
@@ -125,8 +169,10 @@ namespace BetterLoad.Modules.Memory
 
                 long memoryAfter = GC.GetTotalMemory(true);
                 long freed = memoryBefore - memoryAfter;
+                _freedMemoryMB = freed / 1024 / 1024;
+                _showFreedThisFrame = true;
                 ModuleManager.Logger?.LogInfo($"[Memory] Managed memory after: {memoryAfter / 1024 / 1024} MB");
-                ModuleManager.Logger?.LogInfo($"[Memory] Freed: {freed / 1024 / 1024} MB");
+                ModuleManager.Logger?.LogInfo($"[Memory] Freed: {_freedMemoryMB} MB");
 
                 _pendingUnityCleanup = true;
                 ModuleManager.Logger?.LogInfo("[Memory] Unity cleanup scheduled on main thread");
