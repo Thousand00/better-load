@@ -6,7 +6,7 @@ set "GAME_DIR=D:\EFT"
 set "BUILD_CONFIG=Release"
 
 echo ========================================
-echo   Better Load - Auto Deploy Script
+echo   Better Load - Auto Deploy
 echo ========================================
 echo.
 
@@ -60,5 +60,4 @@ echo.
 echo DLL:    %GAME_DIR%\BepInEx\plugins\BetterLoad.dll
 echo Config: %GAME_DIR%\BepInEx\plugins\com.betterload.plugin.jsonc
 echo.
-echo Press any key to exit...
-pause >nul
+pause
