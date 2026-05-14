@@ -18,7 +18,6 @@ namespace BetterLoad
 
             ModuleManager.Register(new Modules.Memory.MemoryModule());
             ModuleManager.Register(new Modules.LOD.LODModule());
-            ModuleManager.Register(new Modules.Particle.ParticleModule());
 
             ModuleManager.LoadAll();
 
