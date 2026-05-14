@@ -48,15 +48,15 @@ SPT-AKI 4.0.13 性能优化 Mod | v1.1.4
 ### LOD调整
 | 选项 | 默认 | 说明 |
 |------|------|------|
-| LOD Bias | 0.5 | 0.1-2.0，低于1更早切换低精度 |
+| LOD Bias | 2.5 | 0.1-2.0，2.5=游戏原生值 |
 | 最大LOD等级 | 0 | 0=使用所有等级 |
 
 ### 粒子控制
 | 选项 | 默认 | 说明 |
 |------|------|------|
-| 速度倍率 | 0.8 | 0.1-2.0 |
+| 速度倍率 | 1.0 | 0.1-2.0，1.0=游戏原生值 |
 | 最大粒子数 | -1 | -1=无限制 |
-| 战局结束时暂停 | ✓ | |
+| 战局结束时暂停 | ✗ | 游戏原生行为 |
 
 ---
 
@@ -65,10 +65,9 @@ SPT-AKI 4.0.13 性能优化 Mod | v1.1.4
 ```
 Better Load/                          # 项目根目录
 ├── Core/                              # 核心组件
-│   ├── BetterLoadFramework.cs        # 插件框架（扫描/加载/卸载插件）
-│   ├── EventBus.cs                   # 事件总线（模块/插件间解耦通信）
-│   ├── IBetterLoadPlugin.cs          # 插件接口
-│   └── ModuleManager.cs              # 模块管理器（含 IUpdatableModule 支持）
+│   ├── EventBus.cs                   # 事件总线（内部模块通信）
+│   ├── IModule.cs                    # 模块接口（IModule + IUpdatableModule）
+│   └── ModuleManager.cs              # 模块管理器（注册/加载/卸载/更新）
 ├── Modules/                           # 功能模块
 │   ├── Memory/                       # 内存清理模块
 │   │   ├── MemoryModule.cs
@@ -77,8 +76,6 @@ Better Load/                          # 项目根目录
 │   │   └── LODModule.cs
 │   └── Particle/                     # 粒子控制模块
 │       └── ParticleModule.cs
-├── Shared/                            # 共享接口
-│   └── IModule.cs                    # IModule + IUpdatableModule 接口
 ├── ref/                               # 游戏DLL引用（需从游戏目录复制）
 ├── BetterLoad/                        # 构建输出目录（构建时自动生成）
 ├── BetterLoad.csproj                  # 项目文件
@@ -154,19 +151,19 @@ dotnet build "Better Load\BetterLoad.csproj" -c Release
 | 性能开销 | <5% | <2% |
 | 内存释放效率 | ~30% | >50% |
 
-### 架构演进
+### 架构
 
 ```
-当前 (v1.1.3)                 目标 (v2.0)
-┌─────────────────────┐       ┌─────────────────────┐
-│ Plugin.cs            │       │ Plugin.cs (DI)      │
-│   ├─ EventBus        │       │   ├─ Event Bus     │
-│   ├─ ModuleManager   │──────▶│   └─ [模块系统]    │
-│   └─ [事件驱动模块]   │       │         │          │
-└─────────────────────┘       │         ▼          │
-                              │     Core           │
-                              │  GC/Profiler/API   │
-                              └─────────────────────┘
+Plugin.cs (BepInEx 入口)
+    │
+    └─► ModuleManager
+              │
+              ├─► EventBus (内部事件通信)
+              │
+              └─► Modules
+                    ├─ MemoryModule (内存清理)
+                    ├─ LODModule (LOD调整)
+                    └─ ParticleModule (粒子控制)
 ```
 
 ### 模块 Roadmap
@@ -213,6 +210,7 @@ dotnet build "Better Load\BetterLoad.csproj" -c Release
 
 | 版本 | 日期 | 更新 |
 |------|------|------|
+| v1.1.4 | 2026-05-14 | **架构简化**：移除 BetterLoadFramework/IBetterLoadPlugin，合并为单一 Mod；默认配置改为游戏原生值 |
 | v1.1.3 | 2026-05-14 | **性能优化**：ParticleModule 移除 ToLower() 避免字符串分配，使用 OrdinalIgnoreCase 比较；EventBus 移除 ToList() 避免 GC 分配，使用 TryGetValue 优化查找；缓存配置值减少属性访问 |
 | v1.1.2 | 2026-05-14 | **代码质量改进**：RaidEndEvent 尝试通过反射获取 LastLocation；Timer dispose 修复防止资源泄漏；GetModule 返回类型改为 nullable；反射类型查找添加缓存提升性能 |
 | v1.1.0 | 2026-05-11 | 激活 EventBus 事件总线，Memory/LOD/Particle 三大模块全部接入事件驱动；MemoryPatcher 同时 Patch StartGame 和 ExitLocation/StopGame；LOD 模块战局开始应用配置、结束恢复原始设置；粒子模块战局开始调整参数、结束暂停非必要粒子；补齐 LOD/Particle 共 5 项配置汉化；提取 FindGameMethod 公共反射方法 |

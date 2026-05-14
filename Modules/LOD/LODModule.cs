@@ -7,7 +7,7 @@ namespace BetterLoad.Modules.LOD
     public class LODModule : IModule
     {
         public string Name => "LOD";
-        public string Version => "1.1.3";
+        public string Version => "1.1.4";
         public bool IsEnabled { get; private set; }
 
         private ConfigEntry<float> _lodBias;

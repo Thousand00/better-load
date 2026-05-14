@@ -8,7 +8,7 @@ namespace BetterLoad.Modules.Particle
     public class ParticleModule : IModule
     {
         public string Name => "Particle";
-        public string Version => "1.1.3";
+        public string Version => "1.1.4";
         public bool IsEnabled { get; private set; }
 
         private ConfigEntry<float> _speedMultiplier;

@@ -10,7 +10,7 @@ namespace BetterLoad.Modules.Memory
     public class MemoryModule : IModule, IUpdatableModule
     {
         public string Name => "Memory";
-        public string Version => "1.0.0";
+        public string Version => "1.1.4";
         public bool IsEnabled { get; private set; }
 
         private HarmonyLib.Harmony _harmony;

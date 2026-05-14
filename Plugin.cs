@@ -8,16 +8,13 @@ namespace BetterLoad
     public class Plugin : BaseUnityPlugin
     {
         public const string Version = "1.1.4";
-        private BetterLoadFramework _framework;
 
         private void Awake()
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             Application.logMessageReceived += OnLogMessageReceived;
 
-            _framework = new BetterLoadFramework(Logger, Config);
-
-            ModuleManager.Initialize(Logger, Config, _framework.EventBus);
+            ModuleManager.Initialize(Logger, Config);
 
             ModuleManager.Register(new Modules.Memory.MemoryModule());
             ModuleManager.Register(new Modules.LOD.LODModule());
@@ -25,21 +22,17 @@ namespace BetterLoad
 
             ModuleManager.LoadAll();
 
-            _framework.ScanAndLoadPlugins(typeof(Plugin).Assembly);
-
-            Logger.LogInfo($"Better Load v{Version} loaded - {ModuleManager.GetAllModules().Count} modules, {_framework.GetPlugins().Count} plugins");
+            Logger.LogInfo($"Better Load v{Version} loaded - {ModuleManager.GetAllModules().Count} modules");
         }
 
         private void OnDestroy()
         {
-            _framework?.UnloadPlugins();
             ModuleManager.UnloadAll();
         }
 
         private void Update()
         {
             ModuleManager.UpdateAll();
-            _framework?.Update();
         }
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
